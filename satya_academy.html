@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satya Academy - Class 1 to 12</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+header{background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;padding:28px 18px;text-align:center}
+header h1{margin:0;font-size:32px} header p{margin:8px 0 0}
+.container{max-width:1050px;margin:auto;padding:20px}
+.card{background:white;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 5px 20px #00000012}
+h2{margin-top:0}.classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px}
+button,select{border:0;border-radius:10px;padding:12px 15px;font-size:15px;cursor:pointer}
+.class-btn{background:#eef2ff;color:#3730a3;font-weight:bold}
+.class-btn:hover,.class-btn.active{background:#4f46e5;color:white}
+.controls{display:flex;gap:10px;flex-wrap:wrap}
+select{background:#f1f5f9;border:1px solid #dbe2ea}
+.primary{background:#2563eb;color:white}.green{background:#16a34a;color:white}
+.red{background:#dc2626;color:white}
+.question{border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:14px 0}
+.option{display:block;width:100%;text-align:left;margin:8px 0;background:#f8fafc;border:1px solid #e2e8f0}
+.option:hover{background:#e0e7ff}
+.option.correct{background:#dcfce7;border-color:#22c55e}
+.option.wrong{background:#fee2e2;border-color:#ef4444}
+.answer{display:none;margin-top:10px;color:#15803d;font-weight:bold}
+#result{font-size:20px;font-weight:bold}
+footer{text-align:center;padding:25px;color:#64748b}
+.hidden{display:none}
+.badge{display:inline-block;background:#ede9fe;color:#6d28d9;padding:6px 10px;border-radius:20px;font-size:13px}
+@media(max-width:600px){header h1{font-size:25px}.container{padding:12px}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 Satya Academy</h1>
+  <p>Class 1st to 12th • MCQ • Answers • Sample Papers</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>🎓 Class चुनें</h2>
+<div class="classes" id="classes"></div>
+</div>
+
+<div class="card">
+<h2>📖 Study Section</h2>
+<div class="controls">
+<select id="subject">
+<option>All Subjects</option>
+<option>Maths</option>
+<option>Science</option>
+<option>English</option>
+<option>Hindi</option>
+<option>SST</option>
+</select>
+<button class="primary" onclick="showMCQ()">MCQ Practice</button>
+<button class="green" onclick="showSample()">Sample Paper</button>
+</div>
+<p>Selected Class: <span class="badge" id="selectedClass">Class 1</span></p>
+</div>
+
+<div class="card" id="content">
+<h2>📝 MCQ Practice</h2>
+<div id="questions"></div>
+<button class="primary" onclick="checkAnswers()">✅ Submit Test</button>
+<button class="red" onclick="resetTest()">↻ Reset</button>
+<div id="result"></div>
+</div>
+
+<div class="card hidden" id="sample">
+<h2>📄 Sample Paper</h2>
+<p><b>Sample Paper – Class <span id="sampleClass"></span></b></p>
+<ol>
+<li>अपने चुने हुए विषय का एक महत्वपूर्ण प्रश्न लिखिए।</li>
+<li>5 MCQ प्रश्न हल कीजिए।</li>
+<li>एक short answer प्रश्न का उत्तर दीजिए।</li>
+<li>एक long answer प्रश्न का उत्तर दीजिए।</li>
+<li>अपने उत्तरों को दोबारा जाँचिए।</li>
+</ol>
+<button class="primary" onclick="showMCQ()">MCQ पर जाएँ</button>
+</div>
+
+</div>
+
+<footer>© 2026 Satya Academy • Educational Practice Website</footer>
+
+<script>
+const classBox=document.getElementById("classes");
+const questionsBox=document.getElementById("questions");
+const selectedClass=document.getElementById("selectedClass");
+const sample=document.getElementById("sample");
+let currentClass=1;
+
+for(let i=1;i<=12;i++){
+  const b=document.createElement("button");
+  b.className="class-btn";
+  b.textContent="Class "+i;
+  b.onclick=()=>selectClass(i,b);
+  classBox.appendChild(b);
+}
+classBox.children[0].classList.add("active");
+
+const questionBank={
+  Maths:[
+    {q:"2 + 3 = ?",o:["4","5","6","7"],a:1},
+    {q:"10 × 2 = ?",o:["10","12","20","22"],a:2},
+    {q:"100 ÷ 10 = ?",o:["5","10","20","100"],a:1}
+  ],
+  Science:[
+    {q:"पौधों में भोजन बनाने की प्रक्रिया क्या कहलाती है?",o:["श्वसन","प्रकाश संश्लेषण","पाचन","वाष्पीकरण"],a:1},
+    {q:"पानी का रासायनिक सूत्र क्या है?",o:["CO₂","O₂","H₂O","N₂"],a:2},
+    {q:"मनुष्य सांस लेने के लिए मुख्यतः किस गैस का उपयोग करता है?",o:["ऑक्सीजन","नाइट्रोजन","CO₂","हाइड्रोजन"],a:0}
+  ],
+  English:[
+    {q:"Choose the correct plural of 'Book'.",o:["Bookes","Books","Bookies","Book"],a:1},
+    {q:"Opposite of 'Big' is:",o:["Large","Tall","Small","Huge"],a:2},
+    {q:"Choose the correct article: ___ apple.",o:["A","An","The","No article"],a:1}
+  ],
+  Hindi:[
+    {q:"'जल' का पर्यायवाची शब्द कौन-सा है?",o:["अग्नि","पानी","वायु","धरती"],a:1},
+    {q:"'दिन' का विलोम क्या है?",o:["सुबह","रात","शाम","प्रकाश"],a:1},
+    {q:"'सुंदर' किस प्रकार का शब्द है?",o:["संज्ञा","सर्वनाम","विशेषण","क्रिया"],a:2}
+  ],
+  SST:[
+    {q:"भारत की राजधानी क्या है?",o:["मुंबई","नई दिल्ली","पटना","जयपुर"],a:1},
+    {q:"भारत में कितने राज्य हैं? (वर्तमान सामान्य ज्ञान बदल सकता है)",o:["20","25","28","30"],a:2},
+    {q:"पृथ्वी का सबसे बड़ा महासागर कौन-सा है?",o:["हिंद महासागर","अटलांटिक","प्रशांत","आर्कटिक"],a:2}
+  ]
+};
+
+function selectClass(n,btn){
+ currentClass=n;
+ document.querySelectorAll(".class-btn").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+ selectedClass.textContent="Class "+n;
+ document.getElementById("sampleClass").textContent=n;
+ showMCQ();
+}
+
+function getQuestions(){
+ const sub=document.getElementById("subject").value;
+ if(sub==="All Subjects") return Object.values(questionBank).flat().slice(0,10);
+ return questionBank[sub];
+}
+
+function showMCQ(){
+ document.getElementById("content").classList.remove("hidden");
+ sample.classList.add("hidden");
+ renderQuestions();
+}
+
+function renderQuestions(){
+ const qs=getQuestions();
+ questionsBox.innerHTML="";
+ qs.forEach((x,i)=>{
+   const d=document.createElement("div");
+   d.className="question";
+   d.innerHTML=`<b>Q${i+1}. ${x.q}</b>
+   ${x.o.map((op,j)=>`<button class="option" data-q="${i}" data-a="${j}" onclick="choose(this)">${String.fromCharCode(65+j)}. ${op}</button>`).join("")}
+   <div class="answer">सही उत्तर: ${String.fromCharCode(65+x.a)}. ${x.o[x.a]}</div>`;
+   questionsBox.appendChild(d);
+ });
+ document.getElementById("result").textContent="";
+}
+
+function choose(btn){
+ const q=btn.dataset.q;
+ document.querySelectorAll(`[data-q="${q}"]`).forEach(x=>x.classList.remove("selected"));
+ btn.classList.add("selected");
+}
+
+function checkAnswers(){
+ const qs=getQuestions(); let score=0;
+ qs.forEach((x,i)=>{
+   const chosen=document.querySelector(`[data-q="${i}"].selected`);
+   const opts=document.querySelectorAll(`[data-q="${i}"]`);
+   opts.forEach(o=>o.classList.remove("correct","wrong"));
+   if(chosen){
+     if(Number(chosen.dataset.a)===x.a){score++;chosen.classList.add("correct")}
+     else chosen.classList.add("wrong");
+   }
+   document.querySelectorAll(".answer")[i].style.display="block";
+ });
+ document.getElementById("result").textContent=`🎉 आपका Score: ${score}/${qs.length}`;
+}
+
+function resetTest(){renderQuestions()}
+
+function showSample(){
+ document.getElementById("content").classList.add("hidden");
+ sample.classList.remove("hidden");
+ document.getElementById("sampleClass").textContent=currentClass;
+}
+
+showMCQ();
+</script>
+</body>
+</html>
